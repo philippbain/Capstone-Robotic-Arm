@@ -1,39 +1,16 @@
-# Capstone Robotic Arm - Next.js Template
+# React + Vite
 
-This repository includes a Next.js presentation website using the App Router.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Current Site Structure
+Currently, two official plugins are available:
 
-- `/`: Scroll-driven project story with animated 3D robotic arm stage
-- `/about`: Team members and role overview
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Quick Start
+## React Compiler
 
-1. Install dependencies:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-```bash
-npm install
-```
+## Expanding the ESLint configuration
 
-2. Start the development server:
-
-```bash
-npm run dev
-```
-
-3. Open [http://localhost:3000](http://localhost:3000)
-
-## Available Scripts
-
-- `npm run dev`: Run local development server
-- `npm run build`: Create production build
-- `npm run start`: Start production server
-- `npm run lint`: Run ESLint
-
-## CAD Integration
-
-Drop your exported arm model at:
-
-- `public/models/robot-arm.glb`
-
-The first iteration currently uses a procedural 3D arm for the scrolling demo and is ready for swapping to your CAD asset.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
