@@ -15,6 +15,15 @@ const teamMembers = [
   { name: 'Brandon Gordon', role: 'Supervisor' },
 ]
 
+const contactEmails = [
+  { name: 'Henry Kwan', email: 'he_kwan@live.concordia.ca' },
+  { name: 'Nicholas Bradley', email: 'bradleynick19@gmail.com' },
+  { name: 'William Mambengat', email: 'w_yembim@live.concordia.ca' },
+  { name: 'Nicolas Desaulniers', email: 'n_desaulniers@outlook.com' },
+  { name: 'Philipp Bain', email: 'philippbain@gmail.com' },
+  { name: 'Jacob Vallee', email: 'ja_val@live.concordia.ca' },
+]
+
 function Hero() {
   const [robotCutoutImage, setRobotCutoutImage] = useState(fullRobotImage)
 
@@ -174,6 +183,20 @@ function Hero() {
               </ul>
             </aside>
           </div>
+        </section>
+
+        <section className="contact-section" aria-label="Contact information">
+          <h2>Contact Us</h2>
+          <ul className="contact-list">
+            {contactEmails.map((contact) => (
+              <li key={contact.email}>
+                <span className="contact-name">{contact.name}</span>
+                <a className="contact-email" href={`mailto:${contact.email}`}>
+                  {contact.email}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>

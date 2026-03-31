@@ -157,6 +157,54 @@
   margin-top: 36px;
 }
 
+.contact-section {
+  margin-top: 34px;
+  padding-top: 14px;
+  border-top: 1px solid #2a2e38;
+}
+
+.contact-section h2 {
+  margin: 0;
+  color: #f5f7ff;
+  font-size: clamp(1.1rem, 1.7vw, 1.45rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.contact-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+}
+
+.contact-list li {
+  display: grid;
+  gap: 2px;
+}
+
+.contact-name {
+  color: #f3f6ff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.contact-email {
+  color: #acb4c8;
+  font-size: 0.93rem;
+  text-decoration: none;
+  word-break: break-word;
+  transition: color 0.2s ease;
+}
+
+.contact-email:hover,
+.contact-email:focus-visible {
+  color: #ff6677;
+  outline: none;
+}
+
 .team-layout {
   margin-top: 14px;
   display: grid;
@@ -250,5 +298,10 @@
   .team-layout {
     grid-template-columns: 1fr;
     gap: 14px;
+  }
+
+  .contact-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
