@@ -7,6 +7,58 @@
     #06070b;
 }
 
+body.is-page-loading {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(215, 24, 44, 0.2), transparent 24%),
+    radial-gradient(circle at 18% 0%, rgba(142, 10, 25, 0.16), transparent 20%),
+    #06070b;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 420ms ease, visibility 420ms ease;
+}
+
+.page-loader.is-fading {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.page-loader-number {
+  color: #ff2f44;
+  font-family: var(--display);
+  font-size: clamp(3.2rem, 14vw, 11rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  animation: page-loader-pulse 1.2s ease-in-out infinite;
+  text-shadow:
+    0 0 8px rgba(255, 47, 68, 0.25),
+    0 0 26px rgba(255, 47, 68, 0.22);
+}
+
+@keyframes page-loader-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
 .grid-overlay {
   display: none;
 }
@@ -737,6 +789,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .page-loader,
+  .page-loader-number {
+    transition: none;
+    animation: none;
+  }
+
   .products-showcase-figure,
   .box-callout-button,
   .modal-image-stage img {

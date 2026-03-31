@@ -19,6 +19,27 @@ const cycloidalCallout = {
   ],
 }
 
+const endEffectorCallout = {
+  targetX: 67.8,
+  targetY: 34.6,
+  labelX: 86.8,
+  labelY: 11.2,
+}
+
+const linksCallout = {
+  targetX: 37.2,
+  targetY: 40.2,
+  labelX: 19.8,
+  labelY: 35.2,
+}
+
+const reedSwitchesCallout = {
+  targetX: 34.6,
+  targetY: 49.6,
+  labelX: 10.8,
+  labelY: 69.4,
+}
+
 function PartDetailsModal({ onClose, title, description, placeholder, idPrefix, closeAriaLabel }) {
   const modalRef = useRef(null)
 
@@ -117,6 +138,9 @@ function Products() {
   const [showcaseImage, setShowcaseImage] = useState(fullAssemblyRender)
   const [isBoxModalOpen, setIsBoxModalOpen] = useState(false)
   const [isCycloidalModalOpen, setIsCycloidalModalOpen] = useState(false)
+  const [isEndEffectorModalOpen, setIsEndEffectorModalOpen] = useState(false)
+  const [isLinksModalOpen, setIsLinksModalOpen] = useState(false)
+  const [isReedSwitchesModalOpen, setIsReedSwitchesModalOpen] = useState(false)
 
   useEffect(() => {
     const createTransparentShowcaseImage = async () => {
@@ -322,6 +346,12 @@ function Products() {
   const calloutStartY = boxCallout.labelY
   const cycloidalStartX = cycloidalCallout.labelX + 8.2
   const cycloidalStartY = cycloidalCallout.labelY
+  const endEffectorStartX = endEffectorCallout.labelX - 7
+  const endEffectorStartY = endEffectorCallout.labelY
+  const linksStartX = linksCallout.labelX + 4.6
+  const linksStartY = linksCallout.labelY
+  const reedSwitchesStartX = reedSwitchesCallout.labelX + 7.1
+  const reedSwitchesStartY = reedSwitchesCallout.labelY
 
   return (
     <main className="hero-page products-page">
@@ -370,7 +400,45 @@ function Products() {
                     y2={target.y}
                   />
                 ))}
+                <line
+                  className="box-callout-path"
+                  x1={endEffectorStartX}
+                  y1={endEffectorStartY}
+                  x2={endEffectorCallout.targetX}
+                  y2={endEffectorCallout.targetY}
+                />
+                <line
+                  className="box-callout-path"
+                  x1={linksStartX}
+                  y1={linksStartY}
+                  x2={linksCallout.targetX}
+                  y2={linksCallout.targetY}
+                />
+                <line
+                  className="box-callout-path"
+                  x1={reedSwitchesStartX}
+                  y1={reedSwitchesStartY}
+                  x2={reedSwitchesCallout.targetX}
+                  y2={reedSwitchesCallout.targetY}
+                />
               </svg>
+
+              <button
+                type="button"
+                className="box-callout-button end-effector-callout-button"
+                style={{
+                  left: `${endEffectorCallout.labelX}%`,
+                  top: `${endEffectorCallout.labelY}%`,
+                }}
+                onPointerDown={(event) => {
+                  event.preventDefault()
+                  setIsEndEffectorModalOpen(true)
+                }}
+                onClick={() => setIsEndEffectorModalOpen(true)}
+                aria-label="Open end effector details"
+              >
+                End Effector
+              </button>
 
               <button
                 type="button"
@@ -391,6 +459,23 @@ function Products() {
 
               <button
                 type="button"
+                className="box-callout-button links-callout-button"
+                style={{
+                  left: `${linksCallout.labelX}%`,
+                  top: `${linksCallout.labelY}%`,
+                }}
+                onPointerDown={(event) => {
+                  event.preventDefault()
+                  setIsLinksModalOpen(true)
+                }}
+                onClick={() => setIsLinksModalOpen(true)}
+                aria-label="Open arm links details"
+              >
+                Links
+              </button>
+
+              <button
+                type="button"
                 className="box-callout-button"
                 style={{
                   left: `${boxCallout.labelX}%`,
@@ -404,6 +489,23 @@ function Products() {
                 aria-label="Open electrical control box details"
               >
                 Electrical Box
+              </button>
+
+              <button
+                type="button"
+                className="box-callout-button reed-switches-callout-button"
+                style={{
+                  left: `${reedSwitchesCallout.labelX}%`,
+                  top: `${reedSwitchesCallout.labelY}%`,
+                }}
+                onPointerDown={(event) => {
+                  event.preventDefault()
+                  setIsReedSwitchesModalOpen(true)
+                }}
+                onClick={() => setIsReedSwitchesModalOpen(true)}
+                aria-label="Open reed switches details"
+              >
+                Reed Switches
               </button>
             </figure>
           </div>
@@ -429,6 +531,39 @@ function Products() {
           description="This section highlights the cycloidal drive joint modules. Replace this text with your final drive ratio, torque, material, and manufacturing details."
           placeholder="Placeholder ready: add drive geometry, reduction stages, bearing setup, and performance metrics here."
           closeAriaLabel="Close cycloidal drive details"
+        />
+      )}
+
+      {isEndEffectorModalOpen && (
+        <PartDetailsModal
+          onClose={() => setIsEndEffectorModalOpen(false)}
+          idPrefix="end-effector-details"
+          title="End Effector"
+          description="This section highlights the end-effector assembly at the tool tip. Replace this text with your final gripper/tooling design, interfaces, and operation details."
+          placeholder="Placeholder ready: add end-effector mechanism, actuation method, and supported task configurations here."
+          closeAriaLabel="Close end effector details"
+        />
+      )}
+
+      {isLinksModalOpen && (
+        <PartDetailsModal
+          onClose={() => setIsLinksModalOpen(false)}
+          idPrefix="links-details"
+          title="Arm Links"
+          description="This section highlights the structural arm links. Replace this text with your final geometry, stiffness, and manufacturing details."
+          placeholder="Placeholder ready: add link material, wall thickness, mounting interfaces, and load path details here."
+          closeAriaLabel="Close arm links details"
+        />
+      )}
+
+      {isReedSwitchesModalOpen && (
+        <PartDetailsModal
+          onClose={() => setIsReedSwitchesModalOpen(false)}
+          idPrefix="reed-switches-details"
+          title="Reed Switches"
+          description="This section highlights the reed switch sensing feature. Replace this text with your final switching logic, wiring, and trigger-position details."
+          placeholder="Placeholder ready: add sensor placement, magnetic threshold values, debounce logic, and interface details here."
+          closeAriaLabel="Close reed switches details"
         />
       )}
     </main>
