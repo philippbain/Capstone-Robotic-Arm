@@ -441,7 +441,7 @@ function PartDetailsModal({
         tabIndex={-1}
       >
         <button className="modal-close-button" onClick={onClose} aria-label={closeAriaLabel}>
-          Close
+          x
         </button>
 
         <header className="category-modal-header">
@@ -965,9 +965,8 @@ function Products() {
         <PartDetailsModal
           onClose={() => setIsLinksModalOpen(false)}
           idPrefix="links-details"
-          title="Arm Links"
-          description="This section highlights the structural arm links. Replace this text with your final geometry, stiffness, and manufacturing details."
-          placeholder="Placeholder ready: add link material, wall thickness, mounting interfaces, and load path details here."
+          title="Links"
+          placeholder="Our links are designed to provide a strong, lightweight structure while also serving a functional role in the arm’s modular construction. Each link is 3D printed in PLA using 25% infill, 4 walls, and a triangular infill pattern to balance strength, weight, and manufacturability. The links are press-fit together through a spline feature, creating a secure and repeatable connection between sections while simplifying assembly. Together, they make up a total arm reach of 1.5 meters. At one end, each link acts as a motor housing, while the other connects to the previous cycloidal drive, allowing motion to be transferred smoothly through the arm."
           closeAriaLabel="Close arm links details"
         />
       )}
