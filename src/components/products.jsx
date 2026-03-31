@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import fullAssemblyRender from '../assets/product page photos/full assembly render.png'
 import nema23Image from '../assets/product page photos/NEMA23.png'
 import nema23ExplodedImage from '../assets/product page photos/NEMA23  Exploded.png'
+import feaLinkImage from '../assets/product page photos/FEA link.jpeg'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -42,7 +43,18 @@ const reedSwitchesCallout = {
   labelY: 69.4,
 }
 
-const createWhiteBackgroundCutout = async (imageSource) => {
+const createWhiteBackgroundCutout = async (
+  imageSource,
+  {
+    minBrightness = 180,
+    maxChroma = 26,
+    distThreshold = 9200,
+    removeInteriorBackground = false,
+    interiorMinBrightness = 20,
+    interiorMaxChroma = 70,
+    interiorDistThreshold = 26000,
+  } = {},
+) => {
   const image = new Image()
   image.src = imageSource
 
@@ -111,13 +123,13 @@ const createWhiteBackgroundCutout = async (imageSource) => {
     const maxChannel = Math.max(r, g, b)
     const minChannel = Math.min(r, g, b)
     const brightness = (r + g + b) / 3
-    const lowChroma = maxChannel - minChannel <= 26
+    const lowChroma = maxChannel - minChannel <= maxChroma
     const distSq =
       (r - backgroundR) * (r - backgroundR) +
       (g - backgroundG) * (g - backgroundG) +
       (b - backgroundB) * (b - backgroundB)
 
-    return a > 0 && lowChroma && brightness >= 180 && distSq <= 9200
+    return a > 0 && lowChroma && brightness >= minBrightness && distSq <= distThreshold
   }
 
   const push = (x, y) => {
@@ -158,6 +170,35 @@ const createWhiteBackgroundCutout = async (imageSource) => {
   for (let flat = 0; flat < totalPixels; flat += 1) {
     if (visited[flat] === 1) {
       data[flat * 4 + 3] = 0
+    }
+  }
+
+  if (removeInteriorBackground) {
+    for (let flat = 0; flat < totalPixels; flat += 1) {
+      if (visited[flat] === 1) {
+        continue
+      }
+
+      const idx = flat * 4
+      const alpha = data[idx + 3]
+      if (alpha === 0) {
+        continue
+      }
+
+      const r = data[idx]
+      const g = data[idx + 1]
+      const b = data[idx + 2]
+      const brightness = (r + g + b) / 3
+      const lowChroma = Math.max(r, g, b) - Math.min(r, g, b) <= interiorMaxChroma
+      const distSq =
+        (r - backgroundR) * (r - backgroundR) +
+        (g - backgroundG) * (g - backgroundG) +
+        (b - backgroundB) * (b - backgroundB)
+
+      if (lowChroma && brightness >= interiorMinBrightness && distSq <= interiorDistThreshold) {
+        data[idx + 3] = 0
+        visited[flat] = 1
+      }
     }
   }
 
@@ -466,6 +507,7 @@ function Products() {
   const [isReedSwitchesModalOpen, setIsReedSwitchesModalOpen] = useState(false)
   const [nema23CutoutImage, setNema23CutoutImage] = useState(nema23Image)
   const [nema23ExplodedCutoutImage, setNema23ExplodedCutoutImage] = useState(nema23ExplodedImage)
+  const [feaLinkCutoutImage, setFeaLinkCutoutImage] = useState(feaLinkImage)
 
   useEffect(() => {
     const createTransparentShowcaseImage = async () => {
@@ -673,17 +715,28 @@ function Products() {
     Promise.all([
       createWhiteBackgroundCutout(nema23Image),
       createWhiteBackgroundCutout(nema23ExplodedImage),
+      createWhiteBackgroundCutout(feaLinkImage, {
+        minBrightness: 0,
+        maxChroma: 54,
+        distThreshold: 13500,
+        removeInteriorBackground: true,
+        interiorMinBrightness: 18,
+        interiorMaxChroma: 78,
+        interiorDistThreshold: 28500,
+      }),
     ])
-      .then(([nema23Cutout, nema23ExplodedCutout]) => {
+      .then(([nema23Cutout, nema23ExplodedCutout, feaLinkCutout]) => {
         if (!isCancelled) {
           setNema23CutoutImage(nema23Cutout)
           setNema23ExplodedCutoutImage(nema23ExplodedCutout)
+          setFeaLinkCutoutImage(feaLinkCutout)
         }
       })
       .catch(() => {
         if (!isCancelled) {
           setNema23CutoutImage(nema23Image)
           setNema23ExplodedCutoutImage(nema23ExplodedImage)
+          setFeaLinkCutoutImage(feaLinkImage)
         }
       })
 
@@ -993,9 +1046,24 @@ function Products() {
           onClose={() => setIsLinksModalOpen(false)}
           idPrefix="links-details"
           title="Links"
-          placeholder="Our links are designed to provide a strong, lightweight structure while also serving a functional role in the arm’s modular construction. Each link is 3D printed in PLA using 25% infill, 4 walls, and a triangular infill pattern to balance strength, weight, and manufacturability. The links are press-fit together through a spline feature, creating a secure and repeatable connection between sections while simplifying assembly. Together, they make up a total arm reach of 1.5 meters. At one end, each link acts as a motor housing, while the other connects to the previous cycloidal drive, allowing motion to be transferred smoothly through the arm."
           closeAriaLabel="Close arm links details"
-        />
+        >
+          <div className="box-details-copy">
+            <p className="box-details-placeholder">
+              Our links are designed to provide a strong, lightweight structure while also serving a functional role
+              in the arm&apos;s modular construction. Each link is 3D printed in PLA using 25% infill, 4 walls, and a
+              triangular infill pattern to balance strength, weight, and manufacturability. The links are press-fit
+              together through a spline feature, creating a secure and repeatable connection between sections while
+              simplifying assembly. Together, they make up a total arm reach of 1.5 meters. At one end, each link
+              acts as a motor housing, while the other connects to the previous cycloidal drive, allowing motion to be
+              transferred smoothly through the arm.
+            </p>
+
+            <figure className="links-fea-figure">
+              <img src={feaLinkCutoutImage} alt="FEA analysis render of a robotic arm link" />
+            </figure>
+          </div>
+        </PartDetailsModal>
       )}
 
       {isReedSwitchesModalOpen && (

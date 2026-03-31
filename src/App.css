@@ -719,6 +719,22 @@ body.is-page-loading {
   gap: 12px;
 }
 
+.links-fea-figure {
+  margin: 2px 0 0;
+  width: min(760px, 100%);
+  justify-self: center;
+}
+
+.links-fea-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+  border: none;
+  filter: none;
+}
+
 .category-modal-overlay {
   position: fixed;
   inset: 0;
