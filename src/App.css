@@ -1,0 +1,254 @@
+.hero-page {
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(215, 24, 44, 0.2), transparent 24%),
+    radial-gradient(circle at 18% 0%, rgba(142, 10, 25, 0.16), transparent 20%),
+    #06070b;
+}
+
+.grid-overlay {
+  display: none;
+}
+
+.hero-content {
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  padding: 30px clamp(16px, 3vw, 38px) 52px;
+  box-sizing: border-box;
+}
+
+.hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a2e38;
+}
+
+.hero-title {
+  margin: 0;
+  display: grid;
+  line-height: 1;
+}
+
+.hero-title-prefix {
+  color: #df5466;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+  font-weight: 600;
+}
+
+.hero-title-main {
+  margin-top: 8px;
+  color: #f5f7ff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  line-height: 0.95;
+}
+
+.hero-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.nav-tab {
+  color: #d8deec;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-weight: 600;
+  font-size: 0.9rem;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 100%;
+  height: 2px;
+  background: #ff3a52;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.nav-tab:hover,
+.nav-tab:focus-visible,
+.nav-tab.is-active {
+  color: #ff6677;
+  outline: none;
+}
+
+.nav-tab:hover::after,
+.nav-tab:focus-visible::after,
+.nav-tab.is-active::after {
+  transform: scaleX(1);
+}
+
+.top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.86fr);
+  gap: clamp(20px, 2.6vw, 34px);
+  margin-top: 34px;
+  align-items: center;
+}
+
+.product-copy h2,
+.team-org-section h2 {
+  margin: 0;
+  color: #f5f7ff;
+  letter-spacing: 0.01em;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+}
+
+.product-copy p {
+  margin: 16px 0 0;
+  max-width: 65ch;
+  line-height: 1.72;
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  color: #b8c0d4;
+}
+
+.robot-panel {
+  margin: 0;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.robot-panel::before {
+  content: '';
+  position: absolute;
+  width: min(520px, 94%);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.28) 34%, rgba(255, 255, 255, 0.04) 62%, transparent 78%);
+  filter: blur(8px);
+}
+
+.hero-image {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+
+.robot-image {
+  position: relative;
+  z-index: 1;
+  width: min(500px, 100%);
+  filter:
+    contrast(1.12)
+    saturate(1.05)
+    drop-shadow(0 0 25px rgba(255, 255, 255, 0.26))
+    drop-shadow(0 0 65px rgba(255, 255, 255, 0.12));
+}
+
+.team-org-section {
+  margin-top: 36px;
+}
+
+.team-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.team-wide-panel {
+  margin: 0;
+}
+
+.team-wide-panel img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.team-description-panel {
+  padding: 2px 0 0;
+}
+
+.team-description-panel h3 {
+  margin: 0;
+  color: #ff4d61;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.team-name-list {
+  margin-top: 12px;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  border-top: 1px solid #2a2e38;
+  padding-top: 12px;
+}
+
+.team-name-list li {
+  display: grid;
+  gap: 2px;
+}
+
+.member-name {
+  color: #f3f6ff;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.member-role {
+  color: #acb4c8;
+  font-size: 0.93rem;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 960px) {
+  .hero-content {
+    padding-top: 22px;
+    padding-bottom: 36px;
+  }
+
+  .hero-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .hero-nav {
+    gap: 16px;
+  }
+
+  .top-row {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+
+  .robot-panel {
+    min-height: 280px;
+  }
+
+  .team-name-list {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .team-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
