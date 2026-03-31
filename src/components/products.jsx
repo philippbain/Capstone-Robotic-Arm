@@ -976,8 +976,7 @@ function Products() {
           onClose={() => setIsReedSwitchesModalOpen(false)}
           idPrefix="reed-switches-details"
           title="Reed Switches"
-          description="This section highlights the reed switch sensing feature. Replace this text with your final switching logic, wiring, and trigger-position details."
-          placeholder="Placeholder ready: add sensor placement, magnetic threshold values, debounce logic, and interface details here."
+          placeholder="Our robot uses normally open reed switches as magnetic limit switches, providing a simple and reliable solution that also makes manufacturing and assembly easier. Each sensor is made up of a reed switch and a magnet; when the magnet passes in front of the switch, the internal contacts close, pulling the Teensy 4.1 input from 3.3 V to ground and causing its signal to change from HIGH to LOW. This allows the controller to detect precise reference points for each joint, enabling consistent homing and helping the robot maintain accurate positional awareness throughout operation."
           closeAriaLabel="Close reed switches details"
         />
       )}
