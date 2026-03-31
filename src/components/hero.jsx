@@ -2,7 +2,7 @@ import fullRobotImage from '../assets/Hero photos/Full robot2.png'
 import teamPictureImage from '../assets/Hero photos/team picture.png'
 import { useEffect, useState } from 'react'
 
-const productDescription = `Our project is a multi-purpose, adaptable 5-DOF robotic arm designed to evolve with the user's needs. Built with a modular design and primarily using 3D-printed PLA components, it is easy to manufacture, modify, and expand. As an open-source platform, it can be customized with any code or hardware, including future additions like cameras, computer vision, or ultrasonic sensors. With a payload capacity of 5 lbs, it is capable of handling a wide range of tasks.
+const productDescription = `Our Capstone Project, 3D Printing Assistant (C-3PA), is a modular, multi-purpose 5-DOF robotic arm designed to evolve with user needs. Built with a modular design and primarily using 3D-printed PLA components, it is easy to manufacture, modify, and expand. As an open-source platform, it can be customized with any code or hardware, including future additions like cameras, computer vision, or ultrasonic sensors. With a payload capacity of 5 lbs, it is capable of handling a wide range of tasks.
 
 Our first proof of concept focuses on automating Bambu Lab 3D printers. The robot autonomously removes completed prints, swaps build plates, and keeps production running continuously. While this demonstrates its capabilities, the system is ultimately designed to be flexible and adaptable to whatever the user wants it to become.`
 
@@ -142,7 +142,7 @@ function Hero() {
         <header className="hero-header">
           <h1 className="hero-title">
             <span className="hero-title-prefix">Team 17</span>
-            <span className="hero-title-main">Robotic Arm</span>
+            <span className="hero-title-main">C-3PA</span>
           </h1>
           <nav className="hero-nav" aria-label="Primary">
             <a className="nav-tab is-active" href="#/" aria-current="page">

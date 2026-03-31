@@ -709,7 +709,7 @@ function Products() {
         <header className="hero-header">
           <h1 className="hero-title">
             <span className="hero-title-prefix">Team 17</span>
-            <span className="hero-title-main">Robotic Arm</span>
+            <span className="hero-title-main">C-3PA</span>
           </h1>
           <nav className="hero-nav" aria-label="Primary">
             <a className="nav-tab" href="#/">
