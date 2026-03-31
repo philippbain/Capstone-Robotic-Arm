@@ -867,10 +867,28 @@ function Products() {
           onClose={() => setIsBoxModalOpen(false)}
           idPrefix="box-details"
           title="Electrical Control Box"
-          description="This section is now connected to the full box region. Replace this text with your final technical details, specs, and diagrams when you are ready."
-          placeholder="Placeholder ready: add box internals, wiring layout, connector mapping, and safety features here."
           closeAriaLabel="Close box details"
-        />
+        >
+          <div className="box-details-copy">
+            <p className="box-details-placeholder">
+              Our electrical box serves as the brains of the project, housing all of the major electrical components
+              required to operate the robot. Inside, it contains the power supply, stepper drivers, microcontroller,
+              logic hardware, and voltage converters, creating a centralized system for power distribution, control,
+              and communication. The box also supports a three-button control interface consisting of an on/off
+              switch, an LED momentary homing button, and an emergency stop, giving the user a simple and accessible
+              way to interact with the system.
+            </p>
+            <p className="box-details-placeholder">
+              The enclosure was designed with modularity in mind. Each wall is a separate 3D-printed panel with its
+              own dedicated inputs and outputs; for example, the left wall contains all of the aviator plugs for the
+              motors and encoders, along with the DB15 connector for the reed switches and servo. The panels are
+              joined together using dovetail features, which makes the box easy to assemble, easy to print, and highly
+              adaptable for future design iterations, since individual panels can be reprinted without remaking the
+              full enclosure. The box is printed in PETG for improved heat resistance and includes honeycomb
+              ventilation on all panels to promote airflow and thermal management.
+            </p>
+          </div>
+        </PartDetailsModal>
       )}
 
       {isCycloidalModalOpen && (

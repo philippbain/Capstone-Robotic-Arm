@@ -552,6 +552,11 @@ body.is-page-loading {
   line-height: 1.6;
 }
 
+.box-details-copy {
+  display: grid;
+  gap: 12px;
+}
+
 .category-modal-overlay {
   position: fixed;
   inset: 0;
