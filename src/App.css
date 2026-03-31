@@ -116,6 +116,7 @@
   line-height: 1.72;
   font-size: clamp(1rem, 1.35vw, 1.12rem);
   color: #b8c0d4;
+  white-space: pre-line;
 }
 
 .robot-panel {

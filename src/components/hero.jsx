@@ -2,8 +2,9 @@ import fullRobotImage from '../assets/Hero photos/Full robot2.png'
 import teamPictureImage from '../assets/Hero photos/team picture.png'
 import { useEffect, useState } from 'react'
 
-const productDescription =
-  'Our project is a 5-DOF robotic arm that automates the repetitive steps of 3D printing. It removes completed prints, swaps build plates, and keeps production running with minimal human input. The system is built using 3D-printed PLA components, making it affordable and easy to manufacture yourself. As an open-source platform, it gives users full freedom to modify, customize, and adapt the system to their specific needs.'
+const productDescription = `Our project is a multi-purpose, adaptable 5-DOF robotic arm designed to evolve with the user's needs. Built with a modular design and primarily using 3D-printed PLA components, it is easy to manufacture, modify, and expand. As an open-source platform, it can be customized with any code or hardware, including future additions like cameras, computer vision, or ultrasonic sensors. With a payload capacity of 5 lbs, it is capable of handling a wide range of tasks.
+
+Our first proof of concept focuses on automating Bambu Lab 3D printers. The robot autonomously removes completed prints, swaps build plates, and keeps production running continuously. While this demonstrates its capabilities, the system is ultimately designed to be flexible and adaptable to whatever the user wants it to become.`
 
 const teamMembers = [
   { name: 'Henry Kwan', role: 'Team Leader' },
@@ -13,6 +14,7 @@ const teamMembers = [
   { name: 'Philipp Bain', role: 'Mechanical Lead' },
   { name: 'Jacob Vallee', role: 'Testing & Documentation Lead' },
   { name: 'Brandon Gordon', role: 'Supervisor' },
+  { name: 'Michael Rembacz', role: 'Professor/Mentor/Sponsor' },
 ]
 
 const contactEmails = [
