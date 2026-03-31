@@ -13,6 +13,16 @@ const teamMembers = [
   { name: 'Philipp Bain', role: 'Mechanical Lead' },
   { name: 'Jacob Vallee', role: 'Testing & Documentation Lead' },
   { name: 'Brandon Gordon', role: 'Supervisor' },
+  { name: 'Michael Rembacz', role: 'Professor/Mentor/Sponsor' },
+]
+
+const contactMembers = [
+  { name: 'Henry Kwan', email: 'he_kwan@live.concordia.ca' },
+  { name: 'Nicholas Bradley', email: 'bradleynick19@gmail.com' },
+  { name: 'William Mambengat', email: 'w_yembim@live.concordia.ca' },
+  { name: 'Nicolas Desaulniers', email: 'n_desaulniers@outlook.com' },
+  { name: 'Philipp Bain', email: 'philippbain@gmail.com' },
+  { name: 'Jacob Vallee', email: 'ja_val@live.concordia.ca' },
 ]
 
 function Hero() {
@@ -174,6 +184,20 @@ function Hero() {
               </ul>
             </aside>
           </div>
+        </section>
+
+        <section className="contact-section" aria-label="Contact details">
+          <h2>Contact Us</h2>
+          <ul className="contact-list" aria-label="Team contact emails">
+            {contactMembers.map((member) => (
+              <li key={`${member.name}-${member.email}`}>
+                <span className="contact-name">{member.name}</span>
+                <a className="contact-email" href={`mailto:${member.email}`}>
+                  {member.email}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>

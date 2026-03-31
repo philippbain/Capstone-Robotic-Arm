@@ -157,6 +157,55 @@
   margin-top: 36px;
 }
 
+.contact-section {
+  margin-top: 24px;
+}
+
+.contact-section h2 {
+  margin: 0;
+  color: #f5f7ff;
+  letter-spacing: 0.04em;
+  font-size: clamp(1.02rem, 1.4vw, 1.25rem);
+  text-transform: uppercase;
+}
+
+.contact-list {
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  list-style: none;
+  border-top: 1px solid #2a2e38;
+  display: grid;
+  gap: 6px;
+}
+
+.contact-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.contact-name {
+  color: #f3f6ff;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.contact-email {
+  color: #acb4c8;
+  text-decoration: none;
+  font-size: 0.87rem;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+}
+
+.contact-email:hover,
+.contact-email:focus-visible {
+  color: #ff6677;
+}
+
 .team-layout {
   margin-top: 14px;
   display: grid;
