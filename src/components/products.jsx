@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import fullAssemblyRender from '../assets/product page photos/full assembly render.png'
+import nema23Image from '../assets/product page photos/NEMA23.png'
+import nema23ExplodedImage from '../assets/product page photos/NEMA23  Exploded.png'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -40,7 +42,328 @@ const reedSwitchesCallout = {
   labelY: 69.4,
 }
 
-function PartDetailsModal({ onClose, title, description, placeholder, idPrefix, closeAriaLabel }) {
+const createWhiteBackgroundCutout = async (imageSource) => {
+  const image = new Image()
+  image.src = imageSource
+
+  await new Promise((resolve, reject) => {
+    image.onload = resolve
+    image.onerror = reject
+  })
+
+  const canvas = document.createElement('canvas')
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  const context = canvas.getContext('2d')
+
+  if (!context) {
+    return imageSource
+  }
+
+  context.drawImage(image, 0, 0)
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+  const { data } = imageData
+  const width = canvas.width
+  const height = canvas.height
+  const totalPixels = width * height
+
+  const visited = new Uint8Array(totalPixels)
+  const queue = new Uint32Array(totalPixels)
+  let head = 0
+  let tail = 0
+
+  let borderSampleCount = 0
+  let borderSumR = 0
+  let borderSumG = 0
+  let borderSumB = 0
+
+  const sampleBorderPixel = (x, y) => {
+    const flat = y * width + x
+    const idx = flat * 4
+    if (data[idx + 3] === 0) {
+      return
+    }
+    borderSampleCount += 1
+    borderSumR += data[idx]
+    borderSumG += data[idx + 1]
+    borderSumB += data[idx + 2]
+  }
+
+  for (let x = 0; x < width; x += 2) {
+    sampleBorderPixel(x, 0)
+    sampleBorderPixel(x, height - 1)
+  }
+  for (let y = 1; y < height - 1; y += 2) {
+    sampleBorderPixel(0, y)
+    sampleBorderPixel(width - 1, y)
+  }
+
+  const backgroundR = borderSampleCount > 0 ? borderSumR / borderSampleCount : 255
+  const backgroundG = borderSampleCount > 0 ? borderSumG / borderSampleCount : 255
+  const backgroundB = borderSampleCount > 0 ? borderSumB / borderSampleCount : 255
+
+  const isBackgroundPixel = (flatIndex) => {
+    const idx = flatIndex * 4
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const a = data[idx + 3]
+    const maxChannel = Math.max(r, g, b)
+    const minChannel = Math.min(r, g, b)
+    const brightness = (r + g + b) / 3
+    const lowChroma = maxChannel - minChannel <= 26
+    const distSq =
+      (r - backgroundR) * (r - backgroundR) +
+      (g - backgroundG) * (g - backgroundG) +
+      (b - backgroundB) * (b - backgroundB)
+
+    return a > 0 && lowChroma && brightness >= 180 && distSq <= 9200
+  }
+
+  const push = (x, y) => {
+    if (x < 0 || x >= width || y < 0 || y >= height) {
+      return
+    }
+
+    const flat = y * width + x
+    if (visited[flat] === 1 || !isBackgroundPixel(flat)) {
+      return
+    }
+    visited[flat] = 1
+    queue[tail] = flat
+    tail += 1
+  }
+
+  for (let x = 0; x < width; x += 1) {
+    push(x, 0)
+    push(x, height - 1)
+  }
+  for (let y = 1; y < height - 1; y += 1) {
+    push(0, y)
+    push(width - 1, y)
+  }
+
+  while (head < tail) {
+    const flat = queue[head]
+    head += 1
+    const x = flat % width
+    const y = Math.floor(flat / width)
+
+    push(x - 1, y)
+    push(x + 1, y)
+    push(x, y - 1)
+    push(x, y + 1)
+  }
+
+  for (let flat = 0; flat < totalPixels; flat += 1) {
+    if (visited[flat] === 1) {
+      data[flat * 4 + 3] = 0
+    }
+  }
+
+  const brightCandidate = new Uint8Array(totalPixels)
+  const brightVisited = new Uint8Array(totalPixels)
+  const brightQueue = new Uint32Array(totalPixels)
+  const brightComponentMaxSize = Math.max(1200, Math.round(totalPixels * 0.02))
+
+  for (let flat = 0; flat < totalPixels; flat += 1) {
+    if (visited[flat] === 1) {
+      continue
+    }
+    const idx = flat * 4
+    if (data[idx + 3] === 0) {
+      continue
+    }
+
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const brightness = (r + g + b) / 3
+    const lowChroma = Math.max(r, g, b) - Math.min(r, g, b) <= 28
+    if (lowChroma && brightness >= 206) {
+      brightCandidate[flat] = 1
+    }
+  }
+
+  for (let flat = 0; flat < totalPixels; flat += 1) {
+    if (brightCandidate[flat] !== 1 || brightVisited[flat] === 1) {
+      continue
+    }
+
+    let queueHead = 0
+    let queueTail = 0
+    let componentBrightnessSum = 0
+    let componentSize = 0
+    let touchesRemovedBackground = false
+    const componentPixels = []
+
+    brightVisited[flat] = 1
+    brightQueue[queueTail] = flat
+    queueTail += 1
+
+    while (queueHead < queueTail) {
+      const current = brightQueue[queueHead]
+      queueHead += 1
+      componentPixels.push(current)
+      componentSize += 1
+      const currentIdx = current * 4
+      componentBrightnessSum += (data[currentIdx] + data[currentIdx + 1] + data[currentIdx + 2]) / 3
+
+      const x = current % width
+      const y = Math.floor(current / width)
+      const neighbors = [
+        [x - 1, y],
+        [x + 1, y],
+        [x, y - 1],
+        [x, y + 1],
+      ]
+
+      for (let i = 0; i < neighbors.length; i += 1) {
+        const [nx, ny] = neighbors[i]
+        if (nx < 0 || nx >= width || ny < 0 || ny >= height) {
+          continue
+        }
+        const neighborFlat = ny * width + nx
+        if (visited[neighborFlat] === 1) {
+          touchesRemovedBackground = true
+        }
+        if (brightCandidate[neighborFlat] === 1 && brightVisited[neighborFlat] !== 1) {
+          brightVisited[neighborFlat] = 1
+          brightQueue[queueTail] = neighborFlat
+          queueTail += 1
+        }
+      }
+    }
+
+    const avgBrightness = componentBrightnessSum / Math.max(1, componentSize)
+    const shouldRemoveComponent =
+      componentSize <= brightComponentMaxSize && (touchesRemovedBackground || avgBrightness >= 226)
+
+    if (!shouldRemoveComponent) {
+      continue
+    }
+
+    for (let i = 0; i < componentPixels.length; i += 1) {
+      const pixel = componentPixels[i]
+      data[pixel * 4 + 3] = 0
+      visited[pixel] = 1
+    }
+  }
+
+  for (let flat = 0; flat < totalPixels; flat += 1) {
+    if (visited[flat] === 1) {
+      continue
+    }
+
+    const idx = flat * 4
+    const alpha = data[idx + 3]
+    if (alpha === 0) {
+      continue
+    }
+
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const maxChannel = Math.max(r, g, b)
+    const minChannel = Math.min(r, g, b)
+    const brightness = (r + g + b) / 3
+    const lowChroma = maxChannel - minChannel <= 34
+
+    if (!lowChroma || brightness < 168) {
+      continue
+    }
+
+    const x = flat % width
+    const y = Math.floor(flat / width)
+    let removedNeighborCount = 0
+
+    for (let ny = y - 1; ny <= y + 1; ny += 1) {
+      if (ny < 0 || ny >= height) {
+        continue
+      }
+      for (let nx = x - 1; nx <= x + 1; nx += 1) {
+        if (nx < 0 || nx >= width || (nx === x && ny === y)) {
+          continue
+        }
+        if (visited[ny * width + nx] === 1) {
+          removedNeighborCount += 1
+        }
+      }
+    }
+
+    if (removedNeighborCount === 0) {
+      continue
+    }
+
+    const edgeFactor = removedNeighborCount / 8
+    let softenedAlpha = alpha
+
+    if (brightness >= 236) {
+      softenedAlpha = Math.round(alpha * (0.03 + (1 - edgeFactor) * 0.1))
+    } else if (brightness >= 220) {
+      softenedAlpha = Math.round(alpha * (0.17 + (1 - edgeFactor) * 0.2))
+    } else if (brightness >= 200) {
+      softenedAlpha = Math.round(alpha * (0.34 + (1 - edgeFactor) * 0.24))
+    } else {
+      softenedAlpha = Math.round(alpha * (0.56 + (1 - edgeFactor) * 0.22))
+    }
+
+    data[idx + 3] = Math.min(alpha, Math.max(0, softenedAlpha))
+  }
+
+  context.putImageData(imageData, 0, 0)
+
+  let minX = width
+  let minY = height
+  let maxX = -1
+  let maxY = -1
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const alpha = data[(y * width + x) * 4 + 3]
+      if (alpha === 0) {
+        continue
+      }
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
+    }
+  }
+
+  if (maxX < minX || maxY < minY) {
+    return canvas.toDataURL('image/png')
+  }
+
+  const cropPadding = 10
+  const cropX = Math.max(0, minX - cropPadding)
+  const cropY = Math.max(0, minY - cropPadding)
+  const cropWidth = Math.min(width - cropX, maxX - minX + 1 + cropPadding * 2)
+  const cropHeight = Math.min(height - cropY, maxY - minY + 1 + cropPadding * 2)
+
+  const croppedCanvas = document.createElement('canvas')
+  croppedCanvas.width = cropWidth
+  croppedCanvas.height = cropHeight
+  const croppedContext = croppedCanvas.getContext('2d')
+
+  if (!croppedContext) {
+    return canvas.toDataURL('image/png')
+  }
+
+  croppedContext.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight)
+  return croppedCanvas.toDataURL('image/png')
+}
+
+function PartDetailsModal({
+  onClose,
+  title,
+  description,
+  placeholder,
+  idPrefix,
+  closeAriaLabel,
+  children,
+  modalClassName,
+}) {
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -110,11 +433,11 @@ function PartDetailsModal({ onClose, title, description, placeholder, idPrefix, 
     <div className="category-modal-overlay" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section
         ref={modalRef}
-        className="category-modal"
+        className={`category-modal${modalClassName ? ` ${modalClassName}` : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        aria-describedby={descriptionId}
+        aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
       >
         <button className="modal-close-button" onClick={onClose} aria-label={closeAriaLabel}>
@@ -123,11 +446,11 @@ function PartDetailsModal({ onClose, title, description, placeholder, idPrefix, 
 
         <header className="category-modal-header">
           <h2 id={titleId}>{title}</h2>
-          <p id={descriptionId}>{description}</p>
+          {description ? <p id={descriptionId}>{description}</p> : null}
         </header>
 
         <div className="category-modal-body">
-          <p className="box-details-placeholder">{placeholder}</p>
+          {children ?? <p className="box-details-placeholder">{placeholder}</p>}
         </div>
       </section>
     </div>
@@ -141,6 +464,8 @@ function Products() {
   const [isEndEffectorModalOpen, setIsEndEffectorModalOpen] = useState(false)
   const [isLinksModalOpen, setIsLinksModalOpen] = useState(false)
   const [isReedSwitchesModalOpen, setIsReedSwitchesModalOpen] = useState(false)
+  const [nema23CutoutImage, setNema23CutoutImage] = useState(nema23Image)
+  const [nema23ExplodedCutoutImage, setNema23ExplodedCutoutImage] = useState(nema23ExplodedImage)
 
   useEffect(() => {
     const createTransparentShowcaseImage = async () => {
@@ -342,6 +667,31 @@ function Products() {
     }
   }, [])
 
+  useEffect(() => {
+    let isCancelled = false
+
+    Promise.all([
+      createWhiteBackgroundCutout(nema23Image),
+      createWhiteBackgroundCutout(nema23ExplodedImage),
+    ])
+      .then(([nema23Cutout, nema23ExplodedCutout]) => {
+        if (!isCancelled) {
+          setNema23CutoutImage(nema23Cutout)
+          setNema23ExplodedCutoutImage(nema23ExplodedCutout)
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setNema23CutoutImage(nema23Image)
+          setNema23ExplodedCutoutImage(nema23ExplodedImage)
+        }
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
   const calloutStartX = boxCallout.labelX - 5.2
   const calloutStartY = boxCallout.labelY
   const cycloidalStartX = cycloidalCallout.labelX + 8.2
@@ -528,10 +878,76 @@ function Products() {
           onClose={() => setIsCycloidalModalOpen(false)}
           idPrefix="cycloidal-details"
           title="Cycloidal Drives"
-          description="This section highlights the cycloidal drive joint modules. Replace this text with your final drive ratio, torque, material, and manufacturing details."
-          placeholder="Placeholder ready: add drive geometry, reduction stages, bearing setup, and performance metrics here."
+          modalClassName="cycloidal-details-modal"
           closeAriaLabel="Close cycloidal drive details"
-        />
+        >
+          <section className="cycloidal-modal-layout" aria-label="Cycloidal drive visual breakdown">
+            <figure className="cycloidal-modal-figure">
+              <img src={nema23CutoutImage} alt="NEMA 23 motor view" />
+            </figure>
+
+            <div className="cycloidal-modal-copy">
+              <p>
+                Our cycloidal drives are engineered for high precision, strong torque output, and compact integration
+                within the robot arm. Designed to provide smooth, reliable motion under load, they allow the system
+                to achieve accurate joint positioning while maintaining the strength needed for more demanding
+                movements. Each drive is 3D printed in PLA using 25% infill, 4 walls, and a triangular infill
+                pattern, providing a practical balance between strength, weight, and manufacturability. We use a 40:1
+                reduction ratio for the shoulder and elbow joints, 30:1 for the wrist, and 20:1 for the yaw axis,
+                giving each joint a ratio tailored to its torque and speed requirements. This setup helps balance
+                power, control, and responsiveness across the arm, and allows the system to comfortably handle a
+                5-pound payload at full extension, making the drives well suited for robotic applications that demand
+                both precision and durability.
+              </p>
+            </div>
+
+            <figure className="cycloidal-modal-figure cycloidal-modal-figure-exploded">
+              <img src={nema23ExplodedCutoutImage} alt="NEMA 23 exploded view" />
+            </figure>
+          </section>
+
+          <section className="cycloidal-specs-section" aria-label="NEMA 23 technical specifications">
+            <h3>Technical Specifications</h3>
+            <div className="cycloidal-specs-table-wrap">
+              <table className="cycloidal-specs-table">
+                <tbody>
+                  <tr>
+                    <th scope="row">Motor Type</th>
+                    <td>NEMA 23 Stepper</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Step Angle</th>
+                    <td>1.8° (typical)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Rated Current</th>
+                    <td>TBD (datasheet value)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Holding Torque</th>
+                    <td>TBD (datasheet value)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Phase Resistance</th>
+                    <td>TBD (datasheet value)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Inductance</th>
+                    <td>TBD (datasheet value)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Supply Voltage</th>
+                    <td>TBD (driver + motor configuration)</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Shaft Diameter</th>
+                    <td>TBD</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </PartDetailsModal>
       )}
 
       {isEndEffectorModalOpen && (

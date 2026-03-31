@@ -618,6 +618,116 @@ body.is-page-loading {
   margin-top: 16px;
 }
 
+.cycloidal-modal-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 1.1fr) minmax(430px, 1.35fr) minmax(380px, 1.85fr);
+  gap: clamp(10px, 1.4vw, 18px);
+  align-items: center;
+  margin-top: 6px;
+}
+
+.cycloidal-modal-figure {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 0;
+}
+
+.cycloidal-modal-figure img {
+  width: 100%;
+  max-width: 340px;
+  max-height: 340px;
+  object-fit: contain;
+  display: block;
+  filter: none;
+}
+
+.cycloidal-modal-figure-exploded img {
+  width: clamp(300px, 30vw, 460px);
+  max-width: none;
+  max-height: none;
+}
+
+.cycloidal-modal-figure-exploded {
+  justify-self: start;
+  transform: translateX(clamp(12px, 1.4vw, 26px));
+}
+
+.cycloidal-modal-copy {
+  padding: 0 clamp(6px, 0.9vw, 10px);
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  margin-right: clamp(-18px, -1.2vw, -6px);
+  position: relative;
+  z-index: 2;
+}
+
+.cycloidal-modal-copy p {
+  margin: 0;
+  color: #bac2d6;
+  line-height: 1.64;
+}
+
+.cycloidal-specs-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #2a3040;
+}
+
+.cycloidal-specs-section h3 {
+  margin: 0 0 10px;
+  color: #ff6e81;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cycloidal-specs-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #2f3749;
+  border-radius: 10px;
+  background: #0c111a;
+}
+
+.cycloidal-specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+.cycloidal-specs-table th,
+.cycloidal-specs-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #252c3b;
+  text-align: left;
+  vertical-align: top;
+}
+
+.cycloidal-specs-table tr:last-child th,
+.cycloidal-specs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cycloidal-specs-table th {
+  width: 36%;
+  color: #d7deee;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cycloidal-specs-table td {
+  color: #aeb7cb;
+  font-size: 0.9rem;
+}
+
+.cycloidal-details-modal {
+  width: min(1400px, 100%);
+}
+
 .modal-gallery {
   display: grid;
   gap: 12px;
@@ -770,6 +880,27 @@ body.is-page-loading {
   .category-modal {
     max-height: 94vh;
     padding: 12px;
+  }
+
+  .cycloidal-modal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cycloidal-modal-figure {
+    min-height: 0;
+  }
+
+  .cycloidal-modal-figure img {
+    max-width: min(100%, 260px);
+  }
+
+  .cycloidal-modal-figure-exploded img {
+    width: min(100%, 360px);
+    max-width: none;
+  }
+
+  .cycloidal-specs-table {
+    min-width: 0;
   }
 
   .category-modal-header {
