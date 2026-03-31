@@ -151,8 +151,8 @@ function Hero() {
             <a className="nav-tab" href="#/products">
               Products
             </a>
-            <a className="nav-tab" href="#">
-              Engineering
+            <a className="nav-tab" href="#/demos">
+              Demos
             </a>
           </nav>
         </header>

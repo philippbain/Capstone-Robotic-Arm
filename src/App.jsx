@@ -2,6 +2,7 @@ import './App.css'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Hero from './components/hero'
 import Products from './components/products'
+import Demos from './components/demos'
 
 const LOADER_FADE_MS = 420
 const PAGE_READY_TIMEOUT_MS = 6500
@@ -10,7 +11,13 @@ const getCurrentView = () => {
   if (typeof window === 'undefined') {
     return 'home'
   }
-  return window.location.hash === '#/products' ? 'products' : 'home'
+  if (window.location.hash === '#/products') {
+    return 'products'
+  }
+  if (window.location.hash === '#/demos') {
+    return 'demos'
+  }
+  return 'home'
 }
 
 const waitForFonts = () => {
@@ -201,7 +208,11 @@ function App() {
 
   return (
     <>
-      <div ref={pageRef}>{view === 'products' ? <Products /> : <Hero />}</div>
+      <div ref={pageRef}>
+        {view === 'products' && <Products />}
+        {view === 'demos' && <Demos />}
+        {view === 'home' && <Hero />}
+      </div>
       {isLoaderVisible && (
         <div className={`page-loader${isLoaderFading ? ' is-fading' : ''}`} style={{ top: loaderTop }} aria-hidden="true">
           <div className="page-loader-number">17</div>
