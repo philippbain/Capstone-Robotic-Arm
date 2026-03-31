@@ -145,11 +145,11 @@ function Hero() {
             <span className="hero-title-main">Robotic Arm</span>
           </h1>
           <nav className="hero-nav" aria-label="Primary">
-            <a className="nav-tab is-active" href="#" aria-current="page">
+            <a className="nav-tab is-active" href="#/" aria-current="page">
               Home
             </a>
-            <a className="nav-tab" href="#">
-              Product
+            <a className="nav-tab" href="#/products">
+              Products
             </a>
             <a className="nav-tab" href="#">
               Engineering
