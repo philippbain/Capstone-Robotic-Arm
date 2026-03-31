@@ -973,10 +973,19 @@ function Products() {
           onClose={() => setIsEndEffectorModalOpen(false)}
           idPrefix="end-effector-details"
           title="End Effector"
-          description="This section highlights the end-effector assembly at the tool tip. Replace this text with your final gripper/tooling design, interfaces, and operation details."
-          placeholder="Placeholder ready: add end-effector mechanism, actuation method, and supported task configurations here."
           closeAriaLabel="Close end effector details"
-        />
+        >
+          <p className="box-details-placeholder">
+            Our current end effector is designed with a forklift-style structure, paired with a servo-actuated
+            gripping mechanism to provide secure and reliable handling. In the context of 3D print automation, the
+            gripper clamps onto the build plate while the fork-style support carries the load, allowing the system to
+            lift and move prints in a stable and controlled manner. This combination improves consistency during part
+            removal and makes the transfer process smooth, steady, and repeatable. It is also worth noting that the
+            end effector is modular, allowing it to be swapped for different end-effector designs depending on the
+            application. This flexibility supports our long-term goal of making the robot adaptable to a wider range
+            of future tasks and use cases.
+          </p>
+        </PartDetailsModal>
       )}
 
       {isLinksModalOpen && (
