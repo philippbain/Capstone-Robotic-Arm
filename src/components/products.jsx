@@ -3,6 +3,9 @@ import fullAssemblyRender from '../assets/product page photos/full assembly rend
 import nema23Image from '../assets/product page photos/NEMA23.png'
 import nema23ExplodedImage from '../assets/product page photos/NEMA23  Exploded.png'
 import feaLinkImage from '../assets/product page photos/FEA link.jpeg'
+import boxAssemblyVideo from '../assets/product page/box assembly video.mp4'
+import powerBoxExplodedImage from '../assets/product page photos/Power Box Exploded.png'
+import wiringDiagramImage from '../assets/product page photos/wiring diagram.png'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -417,6 +420,11 @@ function PartDetailsModal({
   modalClassName,
 }) {
   const modalRef = useRef(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
     const previousFocusedElement = document.activeElement
@@ -441,7 +449,7 @@ function PartDetailsModal({
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault()
-        onClose()
+        onCloseRef.current()
         return
       }
 
@@ -476,7 +484,7 @@ function PartDetailsModal({
         previousFocusedElement.focus()
       }
     }
-  }, [onClose])
+  }, [])
 
   const titleId = `${idPrefix}-title`
   const descriptionId = `${idPrefix}-description`
@@ -512,6 +520,11 @@ function PartDetailsModal({
 function Products() {
   const [showcaseImage, setShowcaseImage] = useState(fullAssemblyRender)
   const [isBoxModalOpen, setIsBoxModalOpen] = useState(false)
+  const [showBoxVideoOverlay, setShowBoxVideoOverlay] = useState(false)
+  const [boxVideoOverlayLabel, setBoxVideoOverlayLabel] = useState('❚❚')
+  const [isBoxVideoEnded, setIsBoxVideoEnded] = useState(false)
+  const [isWiringZoomed, setIsWiringZoomed] = useState(false)
+  const [wiringZoomOrigin, setWiringZoomOrigin] = useState({ x: 50, y: 50 })
   const [isCycloidalModalOpen, setIsCycloidalModalOpen] = useState(false)
   const [isEndEffectorModalOpen, setIsEndEffectorModalOpen] = useState(false)
   const [isLinksModalOpen, setIsLinksModalOpen] = useState(false)
@@ -519,6 +532,9 @@ function Products() {
   const [nema23CutoutImage, setNema23CutoutImage] = useState(nema23Image)
   const [nema23ExplodedCutoutImage, setNema23ExplodedCutoutImage] = useState(nema23ExplodedImage)
   const [feaLinkCutoutImage, setFeaLinkCutoutImage] = useState(feaLinkImage)
+  const [powerBoxExplodedCutoutImage, setPowerBoxExplodedCutoutImage] = useState(powerBoxExplodedImage)
+  const boxVideoRef = useRef(null)
+  const boxVideoOverlayTimeoutRef = useRef(null)
 
   useEffect(() => {
     const createTransparentShowcaseImage = async () => {
@@ -735,12 +751,18 @@ function Products() {
         interiorMaxChroma: 78,
         interiorDistThreshold: 28500,
       }),
+      createWhiteBackgroundCutout(powerBoxExplodedImage, {
+        minBrightness: 130,
+        maxChroma: 36,
+        distThreshold: 15000,
+      }),
     ])
-      .then(([nema23Cutout, nema23ExplodedCutout, feaLinkCutout]) => {
+      .then(([nema23Cutout, nema23ExplodedCutout, feaLinkCutout, powerBoxExplodedCutout]) => {
         if (!isCancelled) {
           setNema23CutoutImage(nema23Cutout)
           setNema23ExplodedCutoutImage(nema23ExplodedCutout)
           setFeaLinkCutoutImage(feaLinkCutout)
+          setPowerBoxExplodedCutoutImage(powerBoxExplodedCutout)
         }
       })
       .catch(() => {
@@ -748,6 +770,7 @@ function Products() {
           setNema23CutoutImage(nema23Image)
           setNema23ExplodedCutoutImage(nema23ExplodedImage)
           setFeaLinkCutoutImage(feaLinkImage)
+          setPowerBoxExplodedCutoutImage(powerBoxExplodedImage)
         }
       })
 
@@ -755,6 +778,156 @@ function Products() {
       isCancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!isBoxModalOpen) {
+      return
+    }
+
+    const video = boxVideoRef.current
+    if (!video) {
+      return
+    }
+
+    const startPlayback = async () => {
+      try {
+        await video.play()
+      } catch {
+        setShowBoxVideoOverlay(false)
+      }
+    }
+
+    startPlayback()
+  }, [isBoxModalOpen])
+
+  useEffect(() => {
+    return () => {
+      if (boxVideoOverlayTimeoutRef.current) {
+        clearTimeout(boxVideoOverlayTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const clearBoxVideoOverlayTimeout = () => {
+    if (boxVideoOverlayTimeoutRef.current) {
+      clearTimeout(boxVideoOverlayTimeoutRef.current)
+      boxVideoOverlayTimeoutRef.current = null
+    }
+  }
+
+  const showTransientBoxVideoOverlay = (label) => {
+    setBoxVideoOverlayLabel(label)
+    setShowBoxVideoOverlay(true)
+
+    clearBoxVideoOverlayTimeout()
+
+    boxVideoOverlayTimeoutRef.current = setTimeout(() => {
+      setShowBoxVideoOverlay(false)
+    }, 900)
+  }
+
+  const showPersistentBoxVideoOverlay = (label) => {
+    setBoxVideoOverlayLabel(label)
+    setShowBoxVideoOverlay(true)
+    clearBoxVideoOverlayTimeout()
+  }
+
+  const toggleBoxVideoPlayback = async () => {
+    const video = boxVideoRef.current
+    if (!video) {
+      return
+    }
+
+    if (isBoxVideoEnded || video.ended) {
+      video.currentTime = 0
+      setIsBoxVideoEnded(false)
+      try {
+        await video.play()
+        showTransientBoxVideoOverlay('❚❚')
+      } catch {
+        showPersistentBoxVideoOverlay('▶')
+      }
+      return
+    }
+
+    if (video.paused) {
+      try {
+        await video.play()
+        showTransientBoxVideoOverlay('❚❚')
+      } catch {
+        showTransientBoxVideoOverlay('▶')
+      }
+      return
+    }
+
+    video.pause()
+    showTransientBoxVideoOverlay('▶')
+  }
+
+  const handleBoxVideoEnded = () => {
+    setIsBoxVideoEnded(true)
+    showPersistentBoxVideoOverlay('▶')
+  }
+
+  const resetWiringDiagramZoom = () => {
+    setIsWiringZoomed(false)
+    setWiringZoomOrigin({ x: 50, y: 50 })
+  }
+
+  const openBoxModal = () => {
+    resetWiringDiagramZoom()
+    setIsBoxVideoEnded(false)
+    setShowBoxVideoOverlay(false)
+    clearBoxVideoOverlayTimeout()
+    setIsBoxModalOpen(true)
+  }
+
+  const closeBoxModal = () => {
+    setIsBoxModalOpen(false)
+    resetWiringDiagramZoom()
+    setIsBoxVideoEnded(false)
+    setShowBoxVideoOverlay(false)
+    clearBoxVideoOverlayTimeout()
+  }
+
+  const handleWiringDiagramClick = (event) => {
+    if (isWiringZoomed) {
+      setIsWiringZoomed(false)
+      return
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) {
+      setWiringZoomOrigin({ x: 50, y: 50 })
+      setIsWiringZoomed(true)
+      return
+    }
+
+    const clickX = ((event.clientX - rect.left) / rect.width) * 100
+    const clickY = ((event.clientY - rect.top) / rect.height) * 100
+
+    setWiringZoomOrigin({
+      x: Math.min(100, Math.max(0, clickX)),
+      y: Math.min(100, Math.max(0, clickY)),
+    })
+    setIsWiringZoomed(true)
+  }
+
+  const handleWiringDiagramKeyDown = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return
+    }
+
+    event.preventDefault()
+
+    if (isWiringZoomed) {
+      setIsWiringZoomed(false)
+      return
+    }
+
+    setWiringZoomOrigin({ x: 50, y: 50 })
+    setIsWiringZoomed(true)
+  }
 
   const calloutStartX = boxCallout.labelX - 5.2
   const calloutStartY = boxCallout.labelY
@@ -897,9 +1070,9 @@ function Products() {
                 }}
                 onPointerDown={(event) => {
                   event.preventDefault()
-                  setIsBoxModalOpen(true)
+                  openBoxModal()
                 }}
-                onClick={() => setIsBoxModalOpen(true)}
+                onClick={openBoxModal}
                 aria-label="Open electrical control box details"
               >
                 Electrical Box
@@ -948,29 +1121,77 @@ function Products() {
 
       {isBoxModalOpen && (
         <PartDetailsModal
-          onClose={() => setIsBoxModalOpen(false)}
+          onClose={closeBoxModal}
           idPrefix="box-details"
           title="Electrical Control Box"
           closeAriaLabel="Close box details"
         >
-          <div className="box-details-copy">
-            <p className="box-details-placeholder">
-              Our electrical box serves as the brains of the project, housing all of the major electrical components
-              required to operate the robot. Inside, it contains the power supply, stepper drivers, microcontroller,
-              logic hardware, and voltage converters, creating a centralized system for power distribution, control,
-              and communication. The box also supports a three-button control interface consisting of an on/off
-              switch, an LED momentary homing button, and an emergency stop, giving the user a simple and accessible
-              way to interact with the system.
-            </p>
-            <p className="box-details-placeholder">
-              The enclosure was designed with modularity in mind. Each wall is a separate 3D-printed panel with its
-              own dedicated inputs and outputs; for example, the left wall contains all of the aviator plugs for the
-              motors and encoders, along with the DB15 connector for the reed switches and servo. The panels are
-              joined together using dovetail features, which makes the box easy to assemble, easy to print, and highly
-              adaptable for future design iterations, since individual panels can be reprinted without remaking the
-              full enclosure. The box is printed in PETG for improved heat resistance and includes honeycomb
-              ventilation on all panels to promote airflow and thermal management.
-            </p>
+          <div className="box-details-layout">
+            <div className="box-top-row">
+              <p className="box-details-placeholder">
+                Our electrical box serves as the brains of the project, housing all of the major electrical
+                components required to operate the robot. Inside, it contains the power supply, stepper drivers,
+                microcontroller, logic hardware, and voltage converters, creating a centralized system for power
+                distribution, control, and communication. The box also supports a three-button control interface
+                consisting of an on/off switch, an LED momentary homing button, and an emergency stop, giving the
+                user a simple and accessible way to interact with the system.
+              </p>
+
+              <figure className="box-video-figure">
+                <video
+                  ref={boxVideoRef}
+                  className="box-assembly-video"
+                  autoPlay
+                  muted
+                  playsInline
+                  preload="metadata"
+                  aria-label="Electrical box assembly video"
+                  onClick={toggleBoxVideoPlayback}
+                  onEnded={handleBoxVideoEnded}
+                >
+                  <source src={boxAssemblyVideo} type="video/mp4" />
+                </video>
+                <span
+                  className={`box-video-overlay${showBoxVideoOverlay ? ' is-visible' : ''}${isBoxVideoEnded ? ' is-persistent' : ''}`}
+                  aria-hidden="true"
+                >
+                  {boxVideoOverlayLabel}
+                </span>
+              </figure>
+            </div>
+
+            <div className="box-middle-row">
+              <figure className="box-exploded-figure">
+                <img src={powerBoxExplodedCutoutImage} alt="Power box exploded view" />
+              </figure>
+
+              <p className="box-details-placeholder">
+                The enclosure was designed with modularity in mind. Each wall is a separate 3D-printed panel with
+                its own dedicated inputs and outputs; for example, the left wall contains all of the aviator plugs
+                for the motors and encoders, along with the DB15 connector for the reed switches and servo. The
+                panels are joined together using dovetail features, which makes the box easy to assemble, easy to
+                print, and highly adaptable for future design iterations, since individual panels can be reprinted
+                without remaking the full enclosure. The box is printed in PETG for improved heat resistance and
+                includes honeycomb ventilation on all panels to promote airflow and thermal management.
+              </p>
+            </div>
+
+            <div className="box-bottom-full">
+              <figure
+                className={`box-wiring-figure${isWiringZoomed ? ' is-zoomed' : ''}`}
+                onClick={handleWiringDiagramClick}
+                onKeyDown={handleWiringDiagramKeyDown}
+                role="button"
+                tabIndex={0}
+                aria-label={isWiringZoomed ? 'Zoom out wiring diagram' : 'Zoom in wiring diagram'}
+              >
+                <img
+                  src={wiringDiagramImage}
+                  alt="Electrical wiring diagram"
+                  style={{ transformOrigin: `${wiringZoomOrigin.x}% ${wiringZoomOrigin.y}%` }}
+                />
+              </figure>
+            </div>
           </div>
         </PartDetailsModal>
       )}
