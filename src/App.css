@@ -513,6 +513,80 @@ body.is-page-loading {
   min-height: calc(100vh - 128px);
 }
 
+.arm-specs-section {
+  margin-top: 20px;
+}
+
+.arm-specs-card {
+  border: 1px solid #2f3543;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 84% 8%, rgba(255, 81, 106, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(15, 20, 30, 0.94) 0%, rgba(9, 13, 20, 0.96) 100%),
+    #0b0f17;
+}
+
+.arm-specs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #2a3040;
+  background: linear-gradient(180deg, rgba(18, 24, 35, 0.9), rgba(13, 18, 27, 0.92));
+}
+
+.arm-specs-header h2 {
+  margin: 0;
+  color: #f5f7ff;
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  letter-spacing: 0.01em;
+}
+
+.arm-specs-chip {
+  border-radius: 9px;
+  background: rgba(255, 81, 106, 0.2);
+  color: #ff7c92;
+  border: 1px solid rgba(255, 112, 133, 0.44);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.arm-specs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.arm-specs-table th,
+.arm-specs-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid #2a3040;
+  text-align: left;
+  vertical-align: top;
+}
+
+.arm-specs-table tr:last-child th,
+.arm-specs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.arm-specs-table th {
+  width: 48%;
+  color: #d9dfed;
+  font-size: clamp(1rem, 1.45vw, 1.18rem);
+  font-weight: 700;
+}
+
+.arm-specs-table td {
+  color: #bec7db;
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  font-weight: 500;
+}
+
 .products-category-panel {
   border: 1px solid #252a35;
   border-radius: 12px;
@@ -1053,6 +1127,35 @@ body.is-page-loading {
 
   .products-layout {
     min-height: calc(100vh - 110px);
+  }
+
+  .arm-specs-header {
+    padding: 14px 12px;
+  }
+
+  .arm-specs-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .arm-specs-chip {
+    font-size: 0.8rem;
+    padding: 5px 9px;
+  }
+
+  .arm-specs-table th,
+  .arm-specs-table td {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+  }
+
+  .arm-specs-table th {
+    border-bottom: none;
+    padding-bottom: 2px;
+  }
+
+  .arm-specs-table td {
+    padding-top: 0;
   }
 
   .products-showcase-shell {

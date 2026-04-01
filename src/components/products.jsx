@@ -43,6 +43,17 @@ const reedSwitchesCallout = {
   labelY: 69.4,
 }
 
+const armTechnicalSpecs = [
+  { label: 'Degrees of Freedom', value: '5-DOF (5-axis movement)' },
+  { label: 'Payload Capacity', value: '5 lbs (2.27 kg)' },
+  { label: 'Maximum Reach', value: '1.5 m (59.1 inches)' },
+  { label: 'Drive Ratios', value: '40:1 (shoulder/elbow), 30:1 (wrist), 20:1 (yaw)' },
+  { label: 'Frame Material', value: '3D-printed PLA links and cycloidal components' },
+  { label: 'Control Core', value: 'Teensy 4.1 microcontroller' },
+  { label: 'End Effector', value: 'Forklift-style modular gripper with servo actuation' },
+  { label: 'Electrical Enclosure', value: 'Modular PETG box with honeycomb ventilation' },
+]
+
 const createWhiteBackgroundCutout = async (
   imageSource,
   {
@@ -911,6 +922,26 @@ function Products() {
                 Reed Switches
               </button>
             </figure>
+          </div>
+        </section>
+
+        <section className="arm-specs-section" aria-label="C-3PA technical specifications">
+          <div className="arm-specs-card">
+            <header className="arm-specs-header">
+              <h2>Technical Specifications</h2>
+              <span className="arm-specs-chip">C-3PA</span>
+            </header>
+
+            <table className="arm-specs-table">
+              <tbody>
+                {armTechnicalSpecs.map((spec) => (
+                  <tr key={spec.label}>
+                    <th scope="row">{spec.label}</th>
+                    <td>{spec.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       </div>
