@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import homingSequenceVideo from '../assets/testing videos /homing sequence.mp4'
+import fullExtension5lbsVideo from '../assets/testing videos /full extension 5lbs.mp4'
 import elbowJoin5lbsVideo from '../assets/testing videos /elbow join 5lbs.mp4'
 
 const DEMO_PLAYBACK_RATE = 1.5
@@ -12,6 +13,12 @@ const demoVideos = [
     description:
       'Initial startup routine showing joint homing and reference alignment for repeatable positioning, using the reed switches, by the psuh of a button',
     src: homingSequenceVideo,
+  },
+  {
+    id: 'full-extension-5lbs',
+    title: 'Full Extension 5lbs',
+    description: 'Full extension load demonstration with a 5 lbs payload.',
+    src: fullExtension5lbsVideo,
   },
   {
     id: 'ellbow-join-5lbs',
