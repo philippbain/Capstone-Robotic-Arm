@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import homingSequenceVideo from '../assets/testing videos /homing sequence.mp4'
 import fullExtension5lbsVideo from '../assets/testing videos /full extension 5lbs.mp4'
 import elbowJoin5lbsVideo from '../assets/testing videos /elbow join 5lbs.mp4'
+import torqueTestVideo from '../assets/testing videos /torque test.mp4'
 
 const DEMO_PLAYBACK_RATE = 1.5
 const DEMO_START_OFFSET = 3
@@ -27,6 +28,13 @@ const demoVideos = [
     src: elbowJoin5lbsVideo,
     trimToHalf: true,
   },
+  {
+    id: 'torque-test',
+    title: 'Torque Test',
+    description: 'Torque test demonstration under load.',
+    src: torqueTestVideo,
+    playbackRate: 0.75,
+  },
 ]
 
 const demoById = new Map(demoVideos.map((demo) => [demo.id, demo]))
@@ -50,13 +58,19 @@ function Demos() {
     }
   }
 
+  const getPlaybackRate = (videoId) => {
+    const demo = demoById.get(videoId)
+    return demo?.playbackRate ?? DEMO_PLAYBACK_RATE
+  }
+
   const applyVideoSettings = (video, videoId) => {
     if (!video) {
       return
     }
-    if (video.playbackRate !== DEMO_PLAYBACK_RATE) {
-      video.playbackRate = DEMO_PLAYBACK_RATE
-      video.defaultPlaybackRate = DEMO_PLAYBACK_RATE
+    const playbackRate = getPlaybackRate(videoId)
+    if (video.playbackRate !== playbackRate) {
+      video.playbackRate = playbackRate
+      video.defaultPlaybackRate = playbackRate
     }
     if (!video.muted) {
       video.muted = true
