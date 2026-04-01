@@ -7,6 +7,7 @@ import boxAssemblyVideo from '../assets/product page/box assembly video.mp4'
 import powerBoxExplodedImage from '../assets/product page photos/Power Box Exploded.png'
 import wiringDiagramImage from '../assets/product page photos/wiring diagram.png'
 import endEffectorWithPlateImage from '../assets/product page photos/End Effector with plate.png'
+import gripperOnlyImage from '../assets/product page photos/Gripper only.png'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -410,6 +411,198 @@ const createWhiteBackgroundCutout = async (
   return croppedCanvas.toDataURL('image/png')
 }
 
+const removeBottomWhitePad = async (
+  imageSource,
+  {
+    minYPercent = 54,
+    minBrightness = 132,
+    maxChroma = 64,
+    hardMinYPercent = 62,
+    hardMinBrightness = 112,
+    hardMaxChroma = 82,
+    bottomFloodMinYPercent = 48,
+    bottomFloodMinBrightness = 92,
+    bottomFloodMaxChroma = 48,
+  } = {},
+) => {
+  const image = new Image()
+  image.src = imageSource
+
+  await new Promise((resolve, reject) => {
+    image.onload = resolve
+    image.onerror = reject
+  })
+
+  const canvas = document.createElement('canvas')
+  canvas.width = image.naturalWidth
+  canvas.height = image.naturalHeight
+  const context = canvas.getContext('2d')
+
+  if (!context) {
+    return imageSource
+  }
+
+  context.drawImage(image, 0, 0)
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+  const { data } = imageData
+  const width = canvas.width
+  const height = canvas.height
+  const minY = Math.floor((height * minYPercent) / 100)
+  const hardMinY = Math.floor((height * hardMinYPercent) / 100)
+  const bottomFloodMinY = Math.floor((height * bottomFloodMinYPercent) / 100)
+  const totalPixels = width * height
+  const visited = new Uint8Array(totalPixels)
+  const queue = new Uint32Array(totalPixels)
+  let head = 0
+  let tail = 0
+
+  const isCandidate = (flatIndex) => {
+    const idx = flatIndex * 4
+    const alpha = data[idx + 3]
+    if (alpha === 0) {
+      return false
+    }
+
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const brightness = (r + g + b) / 3
+    const chroma = Math.max(r, g, b) - Math.min(r, g, b)
+
+    return brightness >= minBrightness && chroma <= maxChroma
+  }
+
+  const isHardBandCandidate = (flatIndex) => {
+    const idx = flatIndex * 4
+    const alpha = data[idx + 3]
+    if (alpha === 0) {
+      return false
+    }
+
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const brightness = (r + g + b) / 3
+    const chroma = Math.max(r, g, b) - Math.min(r, g, b)
+
+    return brightness >= hardMinBrightness && chroma <= hardMaxChroma
+  }
+
+  const isBottomFloodCandidate = (flatIndex) => {
+    const idx = flatIndex * 4
+    const alpha = data[idx + 3]
+    if (alpha === 0) {
+      return false
+    }
+
+    const r = data[idx]
+    const g = data[idx + 1]
+    const b = data[idx + 2]
+    const brightness = (r + g + b) / 3
+    const chroma = Math.max(r, g, b) - Math.min(r, g, b)
+
+    return brightness >= bottomFloodMinBrightness && chroma <= bottomFloodMaxChroma
+  }
+
+  const push = (x, y) => {
+    if (x < 0 || x >= width || y < 0 || y >= height || y < minY) {
+      return
+    }
+    const flat = y * width + x
+    if (visited[flat] === 1 || !isCandidate(flat)) {
+      return
+    }
+    visited[flat] = 1
+    queue[tail] = flat
+    tail += 1
+  }
+
+  for (let x = 0; x < width; x += 1) {
+    push(x, height - 1)
+  }
+  for (let y = minY; y < height; y += 1) {
+    push(0, y)
+    push(width - 1, y)
+  }
+
+  while (head < tail) {
+    const flat = queue[head]
+    head += 1
+    data[flat * 4 + 3] = 0
+
+    const x = flat % width
+    const y = Math.floor(flat / width)
+    push(x - 1, y)
+    push(x + 1, y)
+    push(x, y - 1)
+    push(x, y + 1)
+    if ((x + y) % 2 === 0) {
+      push(x - 1, y - 1)
+      push(x + 1, y - 1)
+      push(x - 1, y + 1)
+      push(x + 1, y + 1)
+    }
+  }
+
+  // Extra strict cleanup just in the bottom band to remove leftover white pad.
+  for (let y = hardMinY; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const flat = y * width + x
+      if (!isHardBandCandidate(flat)) {
+        continue
+      }
+      data[flat * 4 + 3] = 0
+    }
+  }
+
+  // Final pass: remove neutral residual pads connected to bottom/side edges.
+  const visitedBottom = new Uint8Array(totalPixels)
+  const queueBottom = new Uint32Array(totalPixels)
+  let bottomHead = 0
+  let bottomTail = 0
+
+  const pushBottom = (x, y) => {
+    if (x < 0 || x >= width || y < 0 || y >= height || y < bottomFloodMinY) {
+      return
+    }
+    const flat = y * width + x
+    if (visitedBottom[flat] === 1 || !isBottomFloodCandidate(flat)) {
+      return
+    }
+    visitedBottom[flat] = 1
+    queueBottom[bottomTail] = flat
+    bottomTail += 1
+  }
+
+  for (let x = 0; x < width; x += 1) {
+    pushBottom(x, height - 1)
+  }
+  for (let y = bottomFloodMinY; y < height; y += 1) {
+    pushBottom(0, y)
+    pushBottom(width - 1, y)
+  }
+
+  while (bottomHead < bottomTail) {
+    const flat = queueBottom[bottomHead]
+    bottomHead += 1
+    data[flat * 4 + 3] = 0
+
+    const x = flat % width
+    const y = Math.floor(flat / width)
+    pushBottom(x - 1, y)
+    pushBottom(x + 1, y)
+    pushBottom(x, y - 1)
+    pushBottom(x, y + 1)
+    pushBottom(x - 1, y - 1)
+    pushBottom(x + 1, y - 1)
+    pushBottom(x - 1, y + 1)
+    pushBottom(x + 1, y + 1)
+  }
+
+  context.putImageData(imageData, 0, 0)
+  return canvas.toDataURL('image/png')
+}
+
 function PartDetailsModal({
   onClose,
   title,
@@ -534,6 +727,7 @@ function Products() {
   const [nema23ExplodedCutoutImage, setNema23ExplodedCutoutImage] = useState(nema23ExplodedImage)
   const [feaLinkCutoutImage, setFeaLinkCutoutImage] = useState(feaLinkImage)
   const [powerBoxExplodedCutoutImage, setPowerBoxExplodedCutoutImage] = useState(powerBoxExplodedImage)
+  const [gripperOnlyCutoutImage, setGripperOnlyCutoutImage] = useState(gripperOnlyImage)
   const boxVideoRef = useRef(null)
   const boxVideoOverlayTimeoutRef = useRef(null)
 
@@ -757,13 +951,31 @@ function Products() {
         maxChroma: 36,
         distThreshold: 15000,
       }),
+      createWhiteBackgroundCutout(gripperOnlyImage, {
+        minBrightness: 178,
+        maxChroma: 30,
+        distThreshold: 11600,
+      }).then((cutout) =>
+        removeBottomWhitePad(cutout, {
+          minYPercent: 54,
+          minBrightness: 132,
+          maxChroma: 64,
+          hardMinYPercent: 62,
+          hardMinBrightness: 112,
+          hardMaxChroma: 82,
+          bottomFloodMinYPercent: 48,
+          bottomFloodMinBrightness: 92,
+          bottomFloodMaxChroma: 48,
+        }),
+      ),
     ])
-      .then(([nema23Cutout, nema23ExplodedCutout, feaLinkCutout, powerBoxExplodedCutout]) => {
+      .then(([nema23Cutout, nema23ExplodedCutout, feaLinkCutout, powerBoxExplodedCutout, gripperOnlyCutout]) => {
         if (!isCancelled) {
           setNema23CutoutImage(nema23Cutout)
           setNema23ExplodedCutoutImage(nema23ExplodedCutout)
           setFeaLinkCutoutImage(feaLinkCutout)
           setPowerBoxExplodedCutoutImage(powerBoxExplodedCutout)
+          setGripperOnlyCutoutImage(gripperOnlyCutout)
         }
       })
       .catch(() => {
@@ -772,6 +984,7 @@ function Products() {
           setNema23ExplodedCutoutImage(nema23ExplodedImage)
           setFeaLinkCutoutImage(feaLinkImage)
           setPowerBoxExplodedCutoutImage(powerBoxExplodedImage)
+          setGripperOnlyCutoutImage(gripperOnlyImage)
         }
       })
 
@@ -1281,7 +1494,8 @@ function Products() {
           title="End Effector"
           closeAriaLabel="Close end effector details"
         >
-          <div className="box-details-copy">
+          <div className="end-effector-layout">
+            <div className="end-effector-top-row">
             <p className="box-details-placeholder">
               Our current end effector is designed with a forklift-style structure, paired with a servo-actuated
               gripping mechanism to provide secure and reliable handling. In the context of 3D print automation, the
@@ -1292,6 +1506,11 @@ function Products() {
               depending on the application. This flexibility supports our long-term goal of making the robot
               adaptable to a wider range of future tasks and use cases.
             </p>
+
+              <figure className="end-effector-gripper-figure">
+                <img src={gripperOnlyCutoutImage} alt="Gripper-only end effector view" />
+              </figure>
+            </div>
 
             <figure className="end-effector-figure">
               <img src={endEffectorWithPlateImage} alt="End effector with plate" />

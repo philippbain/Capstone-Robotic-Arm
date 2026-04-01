@@ -859,6 +859,38 @@ body.is-page-loading {
   filter: none;
 }
 
+.end-effector-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.end-effector-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.9fr);
+  gap: clamp(12px, 1.8vw, 22px);
+  align-items: start;
+}
+
+.end-effector-gripper-figure {
+  margin: 0;
+  width: 100%;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.end-effector-gripper-figure img {
+  width: 100%;
+  height: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  display: block;
+  background: transparent;
+  border: none;
+  filter: none;
+}
+
 .box-exploded-figure {
   margin: 0;
   background: transparent;
@@ -1333,6 +1365,10 @@ body.is-page-loading {
 
   .box-top-row,
   .box-middle-row {
+    grid-template-columns: 1fr;
+  }
+
+  .end-effector-top-row {
     grid-template-columns: 1fr;
   }
 
