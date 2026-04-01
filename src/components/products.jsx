@@ -6,6 +6,7 @@ import feaLinkImage from '../assets/product page photos/FEA link.jpeg'
 import boxAssemblyVideo from '../assets/product page/box assembly video.mp4'
 import powerBoxExplodedImage from '../assets/product page photos/Power Box Exploded.png'
 import wiringDiagramImage from '../assets/product page photos/wiring diagram.png'
+import endEffectorWithPlateImage from '../assets/product page photos/End Effector with plate.png'
 
 const FOCUSABLE_SELECTOR =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -1280,16 +1281,22 @@ function Products() {
           title="End Effector"
           closeAriaLabel="Close end effector details"
         >
-          <p className="box-details-placeholder">
-            Our current end effector is designed with a forklift-style structure, paired with a servo-actuated
-            gripping mechanism to provide secure and reliable handling. In the context of 3D print automation, the
-            gripper clamps onto the build plate while the fork-style support carries the load, allowing the system to
-            lift and move prints in a stable and controlled manner. This combination improves consistency during part
-            removal and makes the transfer process smooth, steady, and repeatable. It is also worth noting that the
-            end effector is modular, allowing it to be swapped for different end-effector designs depending on the
-            application. This flexibility supports our long-term goal of making the robot adaptable to a wider range
-            of future tasks and use cases.
-          </p>
+          <div className="box-details-copy">
+            <p className="box-details-placeholder">
+              Our current end effector is designed with a forklift-style structure, paired with a servo-actuated
+              gripping mechanism to provide secure and reliable handling. In the context of 3D print automation, the
+              gripper clamps onto the build plate while the fork-style support carries the load, allowing the system
+              to lift and move prints in a stable and controlled manner. This combination improves consistency during
+              part removal and makes the transfer process smooth, steady, and repeatable. It is also worth noting
+              that the end effector is modular, allowing it to be swapped for different end-effector designs
+              depending on the application. This flexibility supports our long-term goal of making the robot
+              adaptable to a wider range of future tasks and use cases.
+            </p>
+
+            <figure className="end-effector-figure">
+              <img src={endEffectorWithPlateImage} alt="End effector with plate" />
+            </figure>
+          </div>
         </PartDetailsModal>
       )}
 

@@ -833,6 +833,32 @@ body.is-page-loading {
   filter: none;
 }
 
+.end-effector-figure {
+  margin: 8px 0 0;
+  width: min(760px, 100%);
+  justify-self: center;
+  padding: clamp(8px, 1.2vw, 14px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(9, 13, 22, 0.92)),
+    #0a111d;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.end-effector-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  filter: none;
+}
+
 .box-exploded-figure {
   margin: 0;
   background: transparent;

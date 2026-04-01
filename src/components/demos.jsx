@@ -23,7 +23,7 @@ const demoVideos = [
   },
   {
     id: 'ellbow-join-5lbs',
-    title: 'Ellbow Join 5lbs',
+    title: 'Elbow Joint 5lbs',
     description: 'Elbow joint load demonstration with a 5 lbs payload.',
     src: elbowJoin5lbsVideo,
     trimToHalf: true,
