@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import homingSequenceVideo from '../assets/testing videos /homing sequence.mp4'
+import elbowJoin5lbsVideo from '../assets/testing videos /elbow join 5lbs.mp4'
 
-const DEMO_PLAYBACK_RATE = 1.25
+const DEMO_PLAYBACK_RATE = 1.5
 const DEMO_START_OFFSET = 3
 
 const demoVideos = [
@@ -12,14 +13,37 @@ const demoVideos = [
       'Initial startup routine showing joint homing and reference alignment for repeatable positioning, using the reed switches, by the psuh of a button',
     src: homingSequenceVideo,
   },
+  {
+    id: 'ellbow-join-5lbs',
+    title: 'Ellbow Join 5lbs',
+    description: 'Elbow joint load demonstration with a 5 lbs payload.',
+    src: elbowJoin5lbsVideo,
+    trimToHalf: true,
+  },
 ]
+
+const demoById = new Map(demoVideos.map((demo) => [demo.id, demo]))
 
 function Demos() {
   const [playingById, setPlayingById] = useState({})
   const [timelineById, setTimelineById] = useState({})
   const videoRefs = useRef({})
 
-  const applyVideoSettings = (video) => {
+  const getPlaybackBounds = (videoId, duration) => {
+    const safeDuration = Number.isFinite(duration) ? duration : 0
+    const start = safeDuration > DEMO_START_OFFSET ? DEMO_START_OFFSET : 0
+    const demo = demoById.get(videoId)
+    const end = demo?.trimToHalf ? start + (safeDuration - start) / 2 : safeDuration
+
+    return {
+      start,
+      end: Math.max(start, end),
+      span: Math.max(0, end - start),
+      safeDuration,
+    }
+  }
+
+  const applyVideoSettings = (video, videoId) => {
     if (!video) {
       return
     }
@@ -33,8 +57,12 @@ function Demos() {
     if (video.volume !== 0) {
       video.volume = 0
     }
-    if (Number.isFinite(video.duration) && video.duration > DEMO_START_OFFSET && video.currentTime < DEMO_START_OFFSET) {
-      video.currentTime = DEMO_START_OFFSET
+    const { start, end } = getPlaybackBounds(videoId, video.duration)
+    if (video.currentTime < start) {
+      video.currentTime = start
+    }
+    if (end > start && video.currentTime >= end) {
+      video.currentTime = start
     }
   }
 
@@ -43,10 +71,14 @@ function Demos() {
     if (!video) {
       return
     }
-    applyVideoSettings(video)
+    applyVideoSettings(video, videoId)
 
-    if (video.currentTime < DEMO_START_OFFSET && Number.isFinite(video.duration) && video.duration > DEMO_START_OFFSET) {
-      video.currentTime = DEMO_START_OFFSET
+    const { start, end } = getPlaybackBounds(videoId, video.duration)
+    if (video.currentTime < start) {
+      video.currentTime = start
+    }
+    if (end > start && video.currentTime >= end - 0.02) {
+      video.currentTime = start
     }
 
     if (video.paused) {
@@ -58,10 +90,9 @@ function Demos() {
   }
 
   const updateTimeline = (videoId, currentTime, duration) => {
-    const safeDuration = Number.isFinite(duration) ? duration : 0
-    const effectiveStart = safeDuration > DEMO_START_OFFSET ? DEMO_START_OFFSET : 0
-    const adjustedDuration = Math.max(0, safeDuration - effectiveStart)
-    const adjustedTime = Math.max(0, Math.min(adjustedDuration, currentTime - effectiveStart))
+    const { start, span } = getPlaybackBounds(videoId, duration)
+    const adjustedDuration = span
+    const adjustedTime = Math.max(0, Math.min(adjustedDuration, currentTime - start))
 
     setTimelineById((previous) => {
       const current = previous[videoId] ?? { currentTime: 0, duration: 0 }
@@ -83,14 +114,13 @@ function Demos() {
     if (!video) {
       return
     }
-    const safeDuration = Number.isFinite(video.duration) ? video.duration : 0
-    const effectiveStart = safeDuration > DEMO_START_OFFSET ? DEMO_START_OFFSET : 0
-    const adjustedDuration = Math.max(0, safeDuration - effectiveStart)
+    const { start, span } = getPlaybackBounds(videoId, video.duration)
+    const adjustedDuration = span
     const clippedRelativeTime = Math.max(0, Math.min(nextTime, adjustedDuration))
-    const targetTime = effectiveStart + clippedRelativeTime
+    const targetTime = start + clippedRelativeTime
 
     video.currentTime = targetTime
-    updateTimeline(videoId, targetTime, safeDuration)
+    updateTimeline(videoId, targetTime, video.duration)
   }
 
   return (
@@ -142,10 +172,7 @@ function Demos() {
                   onClick={() => toggleVideo(demo.id)}
                   onLoadedMetadata={(event) => {
                     const video = event.currentTarget
-                    applyVideoSettings(video)
-                    if (Number.isFinite(video.duration) && video.duration > DEMO_START_OFFSET) {
-                      video.currentTime = DEMO_START_OFFSET
-                    }
+                    applyVideoSettings(video, demo.id)
                     updateTimeline(
                       demo.id,
                       Number.isFinite(video.currentTime) ? video.currentTime : 0,
@@ -154,6 +181,11 @@ function Demos() {
                   }}
                   onTimeUpdate={(event) => {
                     const video = event.currentTarget
+                    const { end, start } = getPlaybackBounds(demo.id, video.duration)
+                    if (!video.paused && end > start && video.currentTime >= end) {
+                      video.currentTime = end
+                      video.pause()
+                    }
                     updateTimeline(
                       demo.id,
                       Number.isFinite(video.currentTime) ? video.currentTime : 0,
