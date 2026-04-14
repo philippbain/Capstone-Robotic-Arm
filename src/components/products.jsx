@@ -1443,47 +1443,6 @@ function Products() {
             </figure>
           </section>
 
-          <section className="cycloidal-specs-section" aria-label="NEMA 23 technical specifications">
-            <h3>Technical Specifications</h3>
-            <div className="cycloidal-specs-table-wrap">
-              <table className="cycloidal-specs-table">
-                <tbody>
-                  <tr>
-                    <th scope="row">Motor Type</th>
-                    <td>NEMA 23 Stepper</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Step Angle</th>
-                    <td>1.8° (typical)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Rated Current</th>
-                    <td>TBD (datasheet value)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Holding Torque</th>
-                    <td>TBD (datasheet value)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Phase Resistance</th>
-                    <td>TBD (datasheet value)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Inductance</th>
-                    <td>TBD (datasheet value)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Supply Voltage</th>
-                    <td>TBD (driver + motor configuration)</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Shaft Diameter</th>
-                    <td>TBD</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
         </PartDetailsModal>
       )}
 
