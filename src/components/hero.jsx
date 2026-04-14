@@ -1,4 +1,4 @@
-import fullRobotImage from '../assets/Hero photos/Full robot2.png'
+import fullRobotImage from '../assets/Hero photos/Full Robot2.PNG'
 import teamPictureImage from '../assets/Hero photos/team picture.png'
 import { useEffect, useState } from 'react'
 
