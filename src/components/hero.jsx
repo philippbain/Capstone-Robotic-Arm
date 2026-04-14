@@ -2,8 +2,9 @@ import fullRobotImage from '../assets/Hero photos/Full robot2.png'
 import teamPictureImage from '../assets/Hero photos/team picture.png'
 import { useEffect, useState } from 'react'
 
-const productDescription =
-  'Our project is a 5-DOF robotic arm that automates the repetitive steps of 3D printing. It removes completed prints, swaps build plates, and keeps production running with minimal human input. The system is built using 3D-printed PLA components, making it affordable and easy to manufacture yourself. As an open-source platform, it gives users full freedom to modify, customize, and adapt the system to their specific needs.'
+const productDescription = `Our Capstone Project, 3D Printing Assistant (C-3PA), is a modular, multi-purpose 5-DOF robotic arm designed to evolve with user needs. Built with a modular design and primarily using 3D-printed PLA components, it is easy to manufacture, modify, and expand. As an open-source platform, it can be customized with any code or hardware, including future additions like cameras, computer vision, or ultrasonic sensors. With a payload capacity of 5 lbs, it is capable of handling a wide range of tasks.
+
+Our first proof of concept focuses on automating Bambu Lab 3D printers. The robot autonomously removes completed prints, swaps build plates, and keeps production running continuously. While this demonstrates its capabilities, the system is ultimately designed to be flexible and adaptable to whatever the user wants it to become.`
 
 const teamMembers = [
   { name: 'Henry Kwan', role: 'Team Leader' },
@@ -13,6 +14,16 @@ const teamMembers = [
   { name: 'Philipp Bain', role: 'Mechanical Lead' },
   { name: 'Jacob Vallee', role: 'Testing & Documentation Lead' },
   { name: 'Brandon Gordon', role: 'Supervisor' },
+  { name: 'Michael Rembacz', role: 'Professor/Mentor/Sponsor' },
+]
+
+const contactEmails = [
+  { name: 'Henry Kwan', email: 'he_kwan@live.concordia.ca' },
+  { name: 'Nicholas Bradley', email: 'bradleynick19@gmail.com' },
+  { name: 'William Mambengat', email: 'w_yembim@live.concordia.ca' },
+  { name: 'Nicolas Desaulniers', email: 'n_desaulniers@outlook.com' },
+  { name: 'Philipp Bain', email: 'philippbain@gmail.com' },
+  { name: 'Jacob Vallee', email: 'ja_val@live.concordia.ca' },
 ]
 
 function Hero() {
@@ -131,17 +142,17 @@ function Hero() {
         <header className="hero-header">
           <h1 className="hero-title">
             <span className="hero-title-prefix">Team 17</span>
-            <span className="hero-title-main">Robotic Arm</span>
+            <span className="hero-title-main">C-3PA</span>
           </h1>
           <nav className="hero-nav" aria-label="Primary">
-            <a className="nav-tab is-active" href="#" aria-current="page">
+            <a className="nav-tab is-active" href="#/" aria-current="page">
               Home
             </a>
-            <a className="nav-tab" href="#">
-              Product
+            <a className="nav-tab" href="#/products">
+              Products
             </a>
-            <a className="nav-tab" href="#">
-              Engineering
+            <a className="nav-tab" href="#/demos">
+              Demos
             </a>
           </nav>
         </header>
@@ -174,6 +185,20 @@ function Hero() {
               </ul>
             </aside>
           </div>
+        </section>
+
+        <section className="contact-section" aria-label="Contact information">
+          <h2>Contact Us</h2>
+          <ul className="contact-list">
+            {contactEmails.map((contact) => (
+              <li key={contact.email}>
+                <span className="contact-name">{contact.name}</span>
+                <a className="contact-email" href={`mailto:${contact.email}`}>
+                  {contact.email}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>

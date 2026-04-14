@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Oxanium:wght@500;600;700&display=swap');
 
 :root {
   --text: #c2c8d6;
@@ -15,6 +15,7 @@
 
   --sans: 'Inter', sans-serif;
   --heading: 'Inter', sans-serif;
+  --display: 'Oxanium', sans-serif;
   --mono: 'JetBrains Mono', monospace;
 
   font: 18px/1.45 var(--sans);
