@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react'
 import homingSequenceVideo from '../assets/testing videos /homing sequence.mp4'
+import pickingUpPrinterPlateVideo from '../assets/testing videos /picking up printer plate .mp4'
+import openingPrinterDoorVideo from '../assets/testing videos /opening printer door .mp4'
+import otherPickAndPlaceApplicationVideo from '../assets/testing videos /other pick and place application.mp4'
 import fullExtension5lbsVideo from '../assets/testing videos /full extension 5lbs.mp4'
 import elbowJoin5lbsVideo from '../assets/testing videos /elbow join 5lbs.mp4'
 import torqueTestVideo from '../assets/testing videos /torque test.mp4'
@@ -14,6 +17,24 @@ const demoVideos = [
     description:
       'Initial startup routine showing joint homing and reference alignment for repeatable positioning, using the reed switches, by the psuh of a button',
     src: homingSequenceVideo,
+  },
+  {
+    id: 'picking-up-printer-plate',
+    title: 'Picking Up Printer Plate',
+    description: 'Demonstration of the end effector picking up a printer build plate.',
+    src: pickingUpPrinterPlateVideo,
+  },
+  {
+    id: 'opening-printer-door',
+    title: 'Opening Printer Door',
+    description: 'Demonstration of the robot opening the printer door.',
+    src: openingPrinterDoorVideo,
+  },
+  {
+    id: 'other-pick-and-place-application',
+    title: 'Other Pick and Place Application',
+    description: 'Demonstration of another pick-and-place application workflow.',
+    src: otherPickAndPlaceApplicationVideo,
   },
   {
     id: 'full-extension-5lbs',
